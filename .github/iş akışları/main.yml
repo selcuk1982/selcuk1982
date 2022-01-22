@@ -1,0 +1,54 @@
+# Katkılarınızı yiyen bir yılanla bir katkı grafiği oluşturmak için GitHub Eylemi.
+
+isim: Yılan Oluştur
+
+# Eylemin ne zaman çalışacağını kontrol eder. Bu eylem her 6 saatte bir çalışır.
+
+üzerinde:
+  Takvim:
+      # her 6 saatte bir
+    - cron: "0 */6 * * *"
+
+# Bu komut, Actions sekmesinden Action'ı otomatik olarak çalıştırmamızı sağlar.
+  iş akışı_gönderimi:
+
+# Bu iş akışındaki çalıştırma sırası:
+Meslekler:
+  # Bu iş akışı "build" adında tek bir iş içeriyor
+  yapı:
+    # İşin yürütüleceği koşucu türü
+    çalışır durumda: ubuntu-en son
+
+    # Adımlar, işin bir parçası olarak yürütülecek bir dizi görevi temsil eder
+    adımlar:
+
+    # $GITHUB_WORKSHOP altındaki depoyu kontrol eder, böylece işiniz ona erişebilir
+      - kullanır: eylemler/checkout@v2
+
+    # Yılanı üretir  
+      - kullanır: Platane/snk@master
+        id: yılan-gif
+        ile:
+          github_user_name: selcuk1982
+          # bu sonraki 2 satır, dosyaları "çıktı" adlı bir dalda oluşturur. Bu, ana dalın dağınık olmasını önler.
+          gif_out_path: dist/github-contribution-grid-snake.gif
+          svg_out_path: dist/github-contribution-grid-snake.svg
+
+     # yapının durumunu göster. Hata ayıklamayı kolaylaştırır (herhangi bir sorun varsa).
+      - çalıştır: git durumu
+
+      # Değişiklikleri itin
+      - isim: Değişiklikleri itin
+        kullanır: ad-m/github-push-action@master
+        ile:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          şube: usta
+          kuvvet: doğru
+
+      - kullanır: crazy-max/ghaction-github-pages@v2.1.3
+        ile:
+          # yukarıda bahsettiğimiz çıkış dalı
+          target_branch: çıktı
+          build_dir: uzak
+        ortam:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
